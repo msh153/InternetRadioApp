@@ -1,0 +1,5 @@
+node_modules
+.expo
+settings.json
+babel.config.js
+metro.config.js
