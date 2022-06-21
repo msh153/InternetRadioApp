@@ -8,6 +8,8 @@ const initialState = {
   disabledOffsetButtons: false,
   limit: 10,
   stations: [],
+  favoriteStations: [],
+  showConfirmationDialog: false,
 }
 
 export default combineReducers({
@@ -16,7 +18,28 @@ export default combineReducers({
   limit: limitReducer,
   availabilityOffsetButtons: availabilityOffsetButtonsReducer,
   stationLanguage: stationLanguageReducer,
+  showConfirmationDialog: showConfirmationDialogReducer,
+  aps: apsReducer,
+  favoriteStations: favoriteStationsReducer,
 });
+
+function favoriteStationsReducer(state = initialState.favoriteStations, action) {
+  switch (action.type) {
+    case 'ADD_FAV':
+      if (!state.favoriteStations)
+        return { favoriteStations: [...state, action.payload] }
+      return { ...state, favoriteStations: [...state.favoriteStations, action.payload] }
+    case 'SET_FAVORITES':
+      return { ...state, favoriteStations: action.payload.stations }
+    case 'SET_FAVORITES':
+      return { ...state, favoriteStations: action.payload.stations }
+    case 'DELETE_FAV':
+      return {
+        ...state, favoriteStations: state.favoriteStations.filter(item => item.name !== action.payload.name),
+      }
+    default: return state
+  }
+}
 
 function offsetReducer(state = initialState.offset, action) {
   switch (action.type) {
@@ -33,7 +56,8 @@ function offsetReducer(state = initialState.offset, action) {
 function stationsReducer(state = initialState.stations, action) {
   switch (action.type) {
     case SET_STATIONS: {
-      return { ...state, stations: action.stations }
+      if (action.payload.stations)
+        return action.payload.stations
     }
     case 'RESET_STATIONS': {
       return { ...state, stations: null }
@@ -44,8 +68,24 @@ function stationsReducer(state = initialState.stations, action) {
 
 function stationLanguageReducer(state = initialState.stationLanguage, action) {
   switch (action.type) {
-    case 'SET_STATION_LANGUAGE':
-      return { ...state, stationLanguage: action.stationLanguage }
+    case 'SET_LANGUAGE':
+      return action.payload.language;
+  }
+  return state;
+}
+
+function apsReducer(state = null, action) {
+  switch (action.type) {
+    case 'SET_APS':
+      return { ...state, aps: action.payload.aps }
+  }
+  return state;
+}
+
+function showConfirmationDialogReducer(state = initialState.showConfirmationDialog, action) {
+  switch (action.type) {
+    case 'SHOW_CONFIRMATION_DIALOG':
+      return { ...state, showConfirmationDialog: action.payload }
   }
   return state;
 }
@@ -53,11 +93,11 @@ function stationLanguageReducer(state = initialState.stationLanguage, action) {
 function limitReducer(state = initialState.limit, action) {
   switch (action.type) {
     case 'SET_LIMIT':
-      return { ...state, limit: action.limit }
+      return action.limit
     case 'SET_DEFAULT_LIMIT':
-      return { ...state, limit: 0 }
-    case 'RESET_OFFSET':
-      return { ...state, limit: null }
+      return 10
+    case 'RESET_LIMIT':
+      return 0;
   }
   return state;
 }

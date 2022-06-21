@@ -1,5 +1,6 @@
 node_modules
 .expo
+.expo-shared
 settings.json
 babel.config.js
 metro.config.js

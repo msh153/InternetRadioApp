@@ -1,7 +1,7 @@
 import React, { useEffect, useState, } from 'react';
 import { ActivityIndicator, FlatList, Text, Alert, View, Button, StyleSheet, TextInput } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import OffsetButtons from './OffsetButtons';
+import OffsetButtons from './app/components/OffsetButtons';
 import { fromFetch } from 'rxjs/fetch';
 import { mergeMap } from 'rxjs';
 
