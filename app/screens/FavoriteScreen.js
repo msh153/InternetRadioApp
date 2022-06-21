@@ -18,6 +18,9 @@ export default SettingsScreen = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
+    const [isModalCreateVisible, setIsModalCreateVisible] = useState(false);
+    const handleModalCreate = () => setIsModalCreateVisible(() => !isModalCreateVisible);
+
 
     // const { offset } = useSelector((state) => state.offset);
     // const { stationLanguage } = useSelector((state) => state.stationLanguage);
@@ -53,7 +56,8 @@ export default SettingsScreen = () => {
                             {isModalVisible && <ChooseStationModal modalStation={modalStation} isModalVisible={isModalVisible} handleModal={() => handleModal()} />}
                         </>)
                 }
-                < AddFavorite />
+                <Button onPress={() => { setIsModalCreateVisible(true) }} title='Add to favorite'></Button>
+                < AddFavorite isModalVisible={isModalCreateVisible} handleModal={() => handleModalCreate()} />
             </>
         </View >
     );
