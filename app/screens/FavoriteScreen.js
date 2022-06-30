@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
-import { FlatList, Text, View, Button, Linking } from 'react-native';
-import Modal from "react-native-modal";
-import { useDispatch, useSelector } from 'react-redux';
-import { createSelector } from 'reselect'
-import { deletefromFavorites, getFavorites, setUrl } from '../actions';
+import { FlatList, Text, View, Button } from 'react-native';
+import { useSelector } from 'react-redux';
 import AddFavorite from '../components/AddFavorite';
 import ChooseStationModal from '../components/ChooseStationModal';
-import Dropdown from '../components/Dropdown';
 
 
 export default SettingsScreen = () => {
@@ -21,24 +16,6 @@ export default SettingsScreen = () => {
     const [isModalCreateVisible, setIsModalCreateVisible] = useState(false);
     const handleModalCreate = () => setIsModalCreateVisible(() => !isModalCreateVisible);
 
-
-    // const { offset } = useSelector((state) => state.offset);
-    // const { stationLanguage } = useSelector((state) => state.stationLanguage);
-    // const [selected, setSelected] = useState(undefined);
-
-    const data = [
-        { label: 'ukrainian', value: '1' },
-        { label: 'english', value: '2' },
-        { label: 'british english', value: '3' },
-        { label: 'american english', value: '4' },
-    ];
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(getFavorites());
-    }, []);
-
     return (
         <View style={{ flex: 1, padding: 25 }}>
             <>
@@ -49,14 +26,15 @@ export default SettingsScreen = () => {
                                 data={favoriteStations}
                                 contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-around' }}
                                 renderItem={({ item }) => (
-                                    // <Button onPress={(e) => Linking.openURL(item.url)} key={item.id} title={item.name}></Button>
-                                    <Button onPress={(e) => { setModalStation(item); handleModal(); }} key={item.id} title={item.name}></Button>
+                                    <Button onPress={(e) => { handleModal(); return setModalStation(item); }} key={item.id} title={item.name}></Button>
                                 )}
                             />
                             {isModalVisible && <ChooseStationModal modalStation={modalStation} isModalVisible={isModalVisible} handleModal={() => handleModal()} />}
                         </>)
                 }
-                <Button onPress={() => { setIsModalCreateVisible(true) }} title='Add to favorite'></Button>
+                <View style={{ flex: 1, padding: 25, justifyContent: 'flex-end' }}>
+                    <Button onPress={() => { setIsModalCreateVisible(true) }} title='Add to favorite'></Button>
+                </View>
                 < AddFavorite isModalVisible={isModalCreateVisible} handleModal={() => handleModalCreate()} />
             </>
         </View >

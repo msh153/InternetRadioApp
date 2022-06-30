@@ -1,16 +1,14 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, Text, Alert, View, Button, StyleSheet, TextInput } from 'react-native';
+import { Alert, View, Button, } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setShowConfirmationDialog } from '../actions';
+import { setDefaultOffset, setShowConfirmationDialog } from '../actions';
 
 const increaseOffset = { type: 'INCREASE_OFFSET' };
 const decreaseOffset = { type: 'DECREASE_OFFSET' };
-const setOffset = (offset) => { type: 'SET_OFFSET', offset };
 
 export default OffsetButtons = () => {
     const offset = useSelector(state => state.offset);
     const showConfirmationDialog = useSelector(state => state.showConfirmationDialog);
-    const stations = useSelector(state => state.stations);
 
     const dispatch = useDispatch();
 
@@ -23,6 +21,7 @@ export default OffsetButtons = () => {
                     text: "Yes",
                     onPress: () => {
                         dispatch(setShowConfirmationDialog(false));
+                        dispatch(setDefaultOffset());
                     },
                 },
                 {

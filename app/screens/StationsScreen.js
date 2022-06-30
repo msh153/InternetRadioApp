@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, FlatList, Text, View, Button, Switch } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View, Button, Switch, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import OffsetButtons from '../components/OffsetButtons';
-import { addToFavorite, getStations, setSelectLanguage, setDefaultLimit, setResetLimit } from '../actions';
-import Dropdown from '../components/Dropdown';
+import { getStations, setDefaultLimit, setResetLimit, setSelectLanguage } from '../actions';
 import ChooseStationModal from '../components/ChooseStationModal';
+import Dropdown from '../components/Dropdown';
 
 const languages = [
     { label: 'ukrainian', value: '1' },
     { label: 'english', value: '2' },
     { label: 'british english', value: '3' },
 ];
+
 export default StationsScreen = () => {
     const stations = useSelector((state) => state.stations);
     const offset = useSelector(state => state.offset);
@@ -29,6 +30,7 @@ export default StationsScreen = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getStations(limit, offset));
+        debugger
     }, [offset]);
 
 
@@ -38,12 +40,15 @@ export default StationsScreen = () => {
                 (!stations?.length) ? <ActivityIndicator size="large" style={{ justifyContent: "center", flexDirection: "row", flex: 1 }} /> : (
                     <>
                         <Dropdown label={'Language: ' + `${stationLanguage || 'Select Language'}`} data={languages} onSelect={(language) => dispatch(setSelectLanguage(language.label, limit))} />
-                        <Text style={{ right: '20%', top: '5%', position: 'absolute' }}>
-                            Show all stations at once at the discovery page: <Switch label="Select Language"
+                        <SafeAreaView style={{ justifyContent: 'center', position: 'relative', flexDirection: 'row', margin: 5 }}>
+                            <Text>
+                                Show all stations at once at the discovery page:
+                            </Text>
+                            <Switch
                                 onValueChange={toggleSwitch}
                                 value={isEnabled}
                             />
-                        </Text>
+                        </SafeAreaView>
                         <Text style={{ right: '5%', top: '5%', position: 'absolute' }}>
                             {/* {(limit || limit == 0) ? <>{offset} - {offset + 10}</> : <>0 - {stations && stations?.length}</>} */}
                         </Text>

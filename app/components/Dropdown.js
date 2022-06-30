@@ -1,20 +1,12 @@
-import React, { FC, ReactElement, useRef, useState } from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Modal,
-  View,
-} from 'react-native';
-// import { Icon } from 'react-native-elements';
-
+import React, { useRef, useState } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, Modal,View, } from 'react-native';
 
 const Dropdown = ({ label, data, onSelect }) => {
   const DropdownButton = useRef();
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState(undefined);
   const [dropdownTop, setDropdownTop] = useState(0);
+  const [dropdownLeft, setDropdownLeft] = useState(0);
   const [dropdownWidth, setDropdownWidth] = useState(0);
 
   const toggleDropdown = () => {
@@ -24,7 +16,8 @@ const Dropdown = ({ label, data, onSelect }) => {
   const openDropdown = () => {
     DropdownButton.current.measure((_fx, _fy, _w, h, _px, py) => {
       setDropdownTop(py + h);
-      setDropdownWidth(_px);
+      setDropdownLeft(_px);
+      setDropdownWidth(_w);
     });
     setVisible(true);
   };
@@ -42,12 +35,12 @@ const Dropdown = ({ label, data, onSelect }) => {
 
   const renderDropdown = () => {
     return (
-      <Modal visible={visible} transparent animationType="none">
+      <Modal visible={visible} transparent animationType="fade">
         <TouchableOpacity
           style={styles.overlay}
           onPress={() => setVisible(false)}
         >
-          <View style={[styles.dropdown, { top: dropdownTop, left: dropdownWidth }]}>
+          <View style={[styles.dropdown, { top: dropdownTop, left: dropdownLeft, width: dropdownWidth }]}>
             <FlatList
               data={data}
               renderItem={renderItem}
@@ -69,7 +62,6 @@ const Dropdown = ({ label, data, onSelect }) => {
       <Text style={styles.buttonText}>
         {(selected && `Language: ${selected.label}`) || label}
       </Text>
-      {/* <Icon style={styles.icon} type="font-awesome" name="chevron-down" /> */}
     </TouchableOpacity>
   );
 };
@@ -79,9 +71,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    height: 50,
-    zIndex: 1,
-    width: 300,
+    height: 40,
+    width: '100%',
   },
   buttonText: {
     flex: 1,
@@ -93,7 +84,7 @@ const styles = StyleSheet.create({
   dropdown: {
     position: 'absolute',
     backgroundColor: 'white',
-    width: 300,
+    width: '100%',
     shadowColor: '#000000',
     shadowRadius: 4,
     shadowOffset: { height: 4, width: 0 },

@@ -1,10 +1,9 @@
 import { ofType, combineEpics } from "redux-observable";
-import { bufferCount, concatMap, empty, EMPTY, forkJoin, from, map, mergeAll, mergeMap, Observable, of, take, toArray } from "rxjs";
-import { catchError, ignoreElements, mapTo, switchMap } from "rxjs/operators";
+import { bufferCount, empty, from, map, mergeAll, of, toArray } from "rxjs";
+import { catchError, ignoreElements, mapTo, switchMap, timeout } from "rxjs/operators";
 import { ajax } from 'rxjs/ajax';
 import { addFavoriteStation, deleteFavorite, getStations, setFavorites, setShowConfirmationDialog } from "./actions";
-// import { openDatabase } from "react-native-sqlite-storage";
-// import { SQLite } from 'expo';
+
 import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('db.db');
@@ -12,27 +11,6 @@ const db = SQLite.openDatabase('db.db');
 function setStations(stations) {
     return {
         type: 'SET_STATIONS', payload: { stations }
-    };
-}
-
-function setAPs(aps) {
-    return {
-        type: 'SET_APS',
-        payload: aps,
-    };
-}
-
-function setAPName(name) {
-    return {
-        type: 'SET_APNAME',
-        name
-    };
-}
-
-function setPlayingStation(st) {
-    return {
-        type: 'SET_PLAYING',
-        st
     };
 }
 
@@ -61,7 +39,7 @@ const getStationsEpic = (action$, state$) => action$.pipe(
 
         if (stations.length > (a.payload.offset / 10))
             return of(setStations(stations[a.payload.offset / 10]));
-        state$.value.offset -= 10;
+
         return of(setShowConfirmationDialog(true));
     }
     ),
@@ -102,60 +80,27 @@ const setDefaultLimit = (action$, state$) => action$.pipe(
             switchMap(response => of(setStations(response.map(({ name, url_resolved }) => ({ name, url_resolved })).filter((i) => i.url_resolved.slice(0, 5) == 'http:')))))
     }));
 
-const setResetLimit = (action$, state$) => action$.pipe(
-    ofType('SET_DEFAULT_LIMIT'),
-    switchMap(() =>
-        of(getStations(10, 0))
-    ));
-
 const setUrlEpic = (action$, state$) => action$.pipe(
     ofType('SET_URL'),
     switchMap((url) => {
         return ajax.get(`http://ztu.local/url?url=${url.url}`).pipe(
             map(res => {
                 if (!res.response) {
-                    throw new Error('Value expected!');
+                    throw new Error();
                 }
                 return of([]);
             }),
             catchError(() => (empty()))
+        )
+    }));
 
-        )
-    }))
-    ;
 const connectToAPEpic = (action$, state$) => action$.pipe(
-    ofType('SET_PARAMS'),
+    ofType('CONNECT_AP'),
     switchMap((params) => {
-        return ajax.get(`http://ztu.local/connect?ssid=${params.ssid}&password=${params.password}`)
+        return ajax.get(`http://ztu.local/connect?ssid=${params.payload.ssid}&password=${params.payload.password}`)
     })
 );
-const getAPsEpic = (action$, state$) => action$.pipe(
-    ofType('GET_APS'),
-    switchMap(() => {
-        return ajax.getJSON(`http://ztu.local/apList`).pipe(
-            map(response =>
-                setAPs(response)),
-        )
-    })
-);
-const getAPNameEpic = (action$, state$) => action$.pipe(
-    ofType('GET_APS'),
-    switchMap(() => {
-        return ajax.getJSON(`http://ztu.local/apname`).pipe(
-            map(response =>
-                response && setAPName(response)),
-        )
-    })
-);
-const getPlayingStationEpic = (action$, state$) => action$.pipe(
-    ofType('GET_PLAYING'),
-    switchMap(() => {
-        return ajax.getJSON(`http://ztu.local/playingnow`).pipe(
-            map(response =>
-                setPlayingStation(response)),
-        )
-    })
-);
+
 const addToFavoriteEpic = (action$, state$) => action$.pipe(
     ofType('ADD_FAVORITE'),
     switchMap((f) => {
@@ -219,14 +164,10 @@ const getFavoriteEpic = (action$, state$) => action$.pipe(
 export default combineEpics(
     getStationsEpic,
     setLanguageEpic,
-    getAPsEpic,
     setUrlEpic,
     connectToAPEpic,
-    getPlayingStationEpic,
     addToFavoriteEpic,
     getFavoriteEpic,
     deleteFavoriteEpic,
     setDefaultLimit,
-    setResetLimit,
-    // increaseNavigationEpic,
 );

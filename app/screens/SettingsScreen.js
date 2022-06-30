@@ -1,31 +1,60 @@
-import React, { useState } from 'react';
-import { Text, View, Switch, } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TextInput, View, StyleSheet, Button, Pressable, } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDefaultLimit, setResetLimit } from '../actions';
-
+import { connectAp, getApnames, } from '../actions';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default SettingsScreen = () => {
-    const { limit } = useSelector((state) => state.limit);
     const dispatch = useDispatch();
 
-    const [isEnabled, setIsEnabled] = useState(!!limit);
-    const toggleSwitch = () => {
-        setIsEnabled(!isEnabled);
-        dispatch(isEnabled ? setDefaultLimit() : setResetLimit())
-    };
+    const [ssid, onChangeSsid] = useState('');
+    const [password, onChangePassword] = useState('');
+
+    const [isEnabled, setIsEnabled] = useState(false);
+
+    useEffect(() => {
+        if (ssid)
+            setIsEnabled(true);
+        else
+            setIsEnabled(false);
+    }, [ssid]);
+
     return (
         <View style={{ flex: 1, padding: 25 }}>
             {
                 <>
-                    <Text style={{ right: '50%', top: '5%', position: 'absolute' }}>
-                        Show all stations at once at the discovery page: <Switch label="Select Language"
-                            onValueChange={toggleSwitch}
-                            value={isEnabled}
+                    <View style={{ backgroundColor: 'white', bottom: '0%' }}>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={onChangeSsid}
+                            value={ssid}
+                            placeholder="SSID of wireless point"
                         />
-                    </Text>
+                        <View>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={onChangePassword}
+                                value={password}
+                                placeholder="Password"
+                                secureTextEntry={true}
+                            />
+                        </View>
+                        <Button title={'Connect'}
+                            disabled={!isEnabled}
+                            onPress={() => { onChangeSsid(''); onChangePassword(''); dispatch(connectAp(ssid, password)); }} />
+                    </View>
                 </>
 
             }
         </View >
     );
 };
+
+const styles = StyleSheet.create({
+    input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+    },
+});

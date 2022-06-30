@@ -31,7 +31,7 @@ export default ChooseStationModal = ({ modalStation, isModalVisible, handleModal
             placeholder="useless placeholder"
           />
           <Button title={'Add'}
-            onPress={() => { dispatch(addFavoriteStation(modalStation.name, modalStation.url_resolved)); handleModal() }} />
+            onPress={() => { handleModal(); return dispatch(addFavoriteStation(modalStation.name, modalStation.url_resolved)); }} />
         </View>
       </TouchableWithoutFeedback>
     </Modal>

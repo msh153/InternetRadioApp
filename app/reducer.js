@@ -19,7 +19,6 @@ export default combineReducers({
   availabilityOffsetButtons: availabilityOffsetButtonsReducer,
   stationLanguage: stationLanguageReducer,
   showConfirmationDialog: showConfirmationDialogReducer,
-  aps: apsReducer,
   favoriteStations: favoriteStationsReducer,
 });
 
@@ -29,8 +28,6 @@ function favoriteStationsReducer(state = initialState.favoriteStations, action) 
       if (!state.favoriteStations)
         return { favoriteStations: [...state, action.payload] }
       return { ...state, favoriteStations: [...state.favoriteStations, action.payload] }
-    case 'SET_FAVORITES':
-      return { ...state, favoriteStations: action.payload.stations }
     case 'SET_FAVORITES':
       return { ...state, favoriteStations: action.payload.stations }
     case 'DELETE_FAV':
@@ -47,8 +44,8 @@ function offsetReducer(state = initialState.offset, action) {
       return state + 10;
     case DECREASE_OFFSET:
       return state - 10;
-    case 'SET_OFFSET':
-      return { ...state, offset: action.offset }
+    case 'SET_DEFAULT_OFFSET':
+      return initialState.offset;
   }
   return state;
 }
@@ -74,26 +71,16 @@ function stationLanguageReducer(state = initialState.stationLanguage, action) {
   return state;
 }
 
-function apsReducer(state = null, action) {
-  switch (action.type) {
-    case 'SET_APS':
-      return { ...state, aps: action.payload.aps }
-  }
-  return state;
-}
-
 function showConfirmationDialogReducer(state = initialState.showConfirmationDialog, action) {
   switch (action.type) {
     case 'SHOW_CONFIRMATION_DIALOG':
-      return { ...state, showConfirmationDialog: action.payload }
+      return { showConfirmationDialog: action.payload }
   }
   return state;
 }
 
 function limitReducer(state = initialState.limit, action) {
   switch (action.type) {
-    case 'SET_LIMIT':
-      return action.limit
     case 'SET_DEFAULT_LIMIT':
       return 10
     case 'RESET_LIMIT':
