@@ -83,7 +83,7 @@ const setDefaultLimit = (action$, state$) => action$.pipe(
 const setUrlEpic = (action$, state$) => action$.pipe(
     ofType('SET_URL'),
     switchMap((url) => {
-        return ajax.get(`http://ztu.local/url?url=${url.url}`).pipe(
+        return ajax.get(`http://192.168.0.168/url?url=${url.url}`).pipe(
             map(res => {
                 if (!res.response) {
                     throw new Error();
@@ -97,7 +97,7 @@ const setUrlEpic = (action$, state$) => action$.pipe(
 const connectToAPEpic = (action$, state$) => action$.pipe(
     ofType('CONNECT_AP'),
     switchMap((params) => {
-        return ajax.get(`http://ztu.local/connect?ssid=${params.payload.ssid}&password=${params.payload.password}`)
+        return ajax.get(`http://192.168.4.1/connect?ssid=${params.payload.ssid}&password=${params.payload.password}`)
     })
 );
 
